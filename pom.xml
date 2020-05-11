@@ -12,7 +12,7 @@
 	<artifactId>penthoughts</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>penthoughts</name>
-	<description>A Simple, Spring Boot Based Diary App</description>
+	<description>A Spring Boot Based Diary App</description>
 
 	<properties>
 		<java.version>11</java.version>

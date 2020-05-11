@@ -5,6 +5,8 @@ import com.capstne.penthoughts.model.Entry;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
+import java.util.function.BinaryOperator;
+import java.util.function.Predicate;
 
 @Repository
 public class EntryDAO {
@@ -17,8 +19,18 @@ public class EntryDAO {
         entriesList.getEntryList().add(new Entry(3, LocalDateTime.now(), null, "My third entry", "Random content here"));
     }
 
+    private static <T> BinaryOperator<T> singleObjectOnly()
+    {
+        return (a, b) -> {throw new RuntimeException("Duplicate elements found: " + a + " and " + b);};
+    }
+
     public Entries getEntriesList(){
         return entriesList;
+    }
+
+    public Entry getEntry(int id){
+        Predicate<Entry> byId = entry -> entry.getId() == id;
+        return entriesList.getEntryList().stream().filter(byId).reduce(singleObjectOnly()).get();
     }
 
     public void addEntry(Entry entry){
