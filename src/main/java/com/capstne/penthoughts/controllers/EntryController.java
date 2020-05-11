@@ -25,6 +25,13 @@ public class EntryController {
         return entryDAO.getEntriesList();
     }
 
+    @GetMapping(path="/{id}", produces = "application/json")
+    public ResponseEntity<Entry> getEntry(@PathVariable int id)
+    {
+        Entry myEntry = entryDAO.getEntry(id);
+        return new ResponseEntity<Entry>(myEntry, HttpStatus.OK);
+    }
+
     @PostMapping(path="/", consumes = "application/json", produces = "application/json")
     public ResponseEntity<Entry> addEntry(@RequestBody Entry entry){
         long id = entryDAO.getEntriesList().getEntryList().size() + 1;
