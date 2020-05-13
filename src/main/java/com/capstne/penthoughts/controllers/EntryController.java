@@ -42,4 +42,12 @@ public class EntryController {
         entryDAO.addEntry(entry);
         return new ResponseEntity<Entry>(entry, HttpStatus.CREATED);
     }
+
+    @PutMapping(path="/{id}", consumes = "application/json", produces = "application/json")
+    public ResponseEntity<Entry> updateEntry(@RequestBody Entry updatedEntry, @PathVariable long id)
+    {
+        Entry currentEntry = entryDAO.getEntry(id);
+        Entry result = entryDAO.updateEntry(currentEntry, updatedEntry);
+        return new ResponseEntity<Entry>(result, HttpStatus.OK);
+    }
 }
