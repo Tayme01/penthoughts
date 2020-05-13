@@ -50,4 +50,15 @@ public class EntryController {
         Entry result = entryDAO.updateEntry(currentEntry, updatedEntry);
         return new ResponseEntity<Entry>(result, HttpStatus.OK);
     }
+
+    @DeleteMapping(path="/{id}")
+    public ResponseEntity<Long> deleteEntry(@PathVariable long id)
+    {
+        Entry entry = entryDAO.getEntry(id);
+        Boolean isRemoved = entryDAO.deleteEntry(entry);
+        if (!isRemoved){
+            return new ResponseEntity<>(id, HttpStatus.NOT_FOUND);
+        }
+        return new ResponseEntity<>(id, HttpStatus.OK);
+    }
 }
