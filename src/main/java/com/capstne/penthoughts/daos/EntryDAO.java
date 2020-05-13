@@ -28,11 +28,21 @@ public class EntryDAO {
         return entriesList;
     }
 
-    public Entry getEntry(int id){
+    public Entry getEntry(long id){
         Predicate<Entry> byId = entry -> entry.getId() == id;
         return entriesList.getEntryList().stream().filter(byId).reduce(singleObjectOnly()).get();
     }
 
+    public Entry updateEntry(Entry currentEntry, Entry updatedEntry) {
+        int id = entriesList.getEntryList().indexOf(currentEntry);
+
+        updatedEntry.setCreatedTime(currentEntry.getCreatedTime());
+        updatedEntry.setId(currentEntry.getId());
+        updatedEntry.setUpdatedTime(LocalDateTime.now());
+
+        entriesList.getEntryList().set(id, updatedEntry);
+        return updatedEntry;
+    }
     public void addEntry(Entry entry){
         entriesList.getEntryList().add(entry);
     }
