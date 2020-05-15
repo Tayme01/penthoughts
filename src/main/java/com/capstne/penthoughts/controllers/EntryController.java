@@ -40,7 +40,13 @@ public class EntryController {
         entry.setUpdatedTime(null);
 
         entryDAO.addEntry(entry);
-        return new ResponseEntity<Entry>(entry, HttpStatus.CREATED);
+
+        URI location = ServletUriComponentsBuilder.fromCurrentRequest()
+                .path("/{id}")
+                .buildAndExpand(entry.getId())
+                .toUri();
+
+        return ResponseEntity.created(location).build();
     }
 
     @PutMapping(path="/{id}", consumes = "application/json", produces = "application/json")
