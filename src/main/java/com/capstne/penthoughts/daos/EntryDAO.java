@@ -43,8 +43,9 @@ public class EntryDAO {
         entriesList.getEntryList().set(id, updatedEntry);
         return updatedEntry;
     }
-    public void addEntry(Entry entry){
+    public Boolean addEntry(Entry entry){
         entriesList.getEntryList().add(entry);
+        return true;
     }
 
     public Boolean deleteEntry(Entry entry){
