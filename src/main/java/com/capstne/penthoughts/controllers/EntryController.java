@@ -39,14 +39,18 @@ public class EntryController {
         entry.setCreatedTime(LocalDateTime.now());
         entry.setUpdatedTime(null);
 
-        entryDAO.addEntry(entry);
+        Boolean success = entryDAO.addEntry(entry);
 
-        URI location = ServletUriComponentsBuilder.fromCurrentRequest()
-                .path("/{id}")
-                .buildAndExpand(entry.getId())
-                .toUri();
-
-        return ResponseEntity.created(location).build();
+        if(success){
+            URI location = ServletUriComponentsBuilder.fromCurrentRequest()
+                    .path("/{id}")
+                    .buildAndExpand(entry.getId())
+                    .toUri();
+            return ResponseEntity.created(location).build();
+        }
+        else{
+            return ResponseEntity.status(500).build();
+        }
     }
 
     @PutMapping(path="/{id}", consumes = "application/json", produces = "application/json")
