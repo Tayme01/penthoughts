@@ -34,13 +34,27 @@ public class EntryController {
 
     @PostMapping(path="/", consumes = "application/json", produces = "application/json")
     public ResponseEntity<Entry> addEntry(@RequestBody Entry entry){
-        long id = entryDAO.getEntriesList().getEntryList().size() + 1;
-        entry.setId(id);
-        entry.setCreatedTime(LocalDateTime.now());
-        entry.setUpdatedTime(null);
+        try {
+            long id = entryDAO.getEntriesList().getEntryList().size();
+            entry.setId(id);
+            entry.setCreatedTime(LocalDateTime.now());
+            entry.setUpdatedTime(null);
 
-        entryDAO.addEntry(entry);
-        return new ResponseEntity<Entry>(entry, HttpStatus.CREATED);
+            Boolean success = entryDAO.addEntry(entry);
+
+            if(success){
+                URI location = ServletUriComponentsBuilder.fromCurrentRequest()
+                        .path("/{id}")
+                        .buildAndExpand(entry.getId())
+                        .toUri();
+                return ResponseEntity.created(location).build();
+            }
+            else{
+                return ResponseEntity.status(500).build();
+            }
+        } catch (NullPointerException e) {
+            return ResponseEntity.status(500).build();
+        }
     }
 
     @PutMapping(path="/{id}", consumes = "application/json", produces = "application/json")
@@ -49,5 +63,16 @@ public class EntryController {
         Entry currentEntry = entryDAO.getEntry(id);
         Entry result = entryDAO.updateEntry(currentEntry, updatedEntry);
         return new ResponseEntity<Entry>(result, HttpStatus.OK);
+    }
+
+    @DeleteMapping(path="/{id}")
+    public ResponseEntity<Long> deleteEntry(@PathVariable long id)
+    {
+        Entry entry = entryDAO.getEntry(id);
+        Boolean isRemoved = entryDAO.deleteEntry(entry);
+        if (!isRemoved){
+            return new ResponseEntity<>(id, HttpStatus.NOT_FOUND);
+        }
+        return new ResponseEntity<>(id, HttpStatus.OK);
     }
 }
