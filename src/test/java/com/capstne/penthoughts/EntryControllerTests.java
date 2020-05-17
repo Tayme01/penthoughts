@@ -55,4 +55,15 @@ public class EntryControllerTests {
         ResponseEntity<Entry> responseEntity = entryController.updateEntry(entry,1);
         assertThat(responseEntity.getStatusCodeValue()).isEqualTo(200);
     }
+
+    @Test
+    public void testGetEntry(){
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        RequestContextHolder.setRequestAttributes(new ServletRequestAttributes(request));
+
+        when(entryDAO.addEntry(any(Entry.class))).thenReturn(true);
+
+        ResponseEntity<Entry> responseEntity = entryController.getEntry(1);
+        assertThat(responseEntity.getStatusCodeValue()).isEqualTo(200);
+    }
 }
