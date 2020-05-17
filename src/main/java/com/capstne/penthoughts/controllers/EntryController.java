@@ -34,21 +34,25 @@ public class EntryController {
 
     @PostMapping(path="/", consumes = "application/json", produces = "application/json")
     public ResponseEntity<Entry> addEntry(@RequestBody Entry entry){
-        long id = entryDAO.getEntriesList().getEntryList().size() + 1;
-        entry.setId(id);
-        entry.setCreatedTime(LocalDateTime.now());
-        entry.setUpdatedTime(null);
+        try {
+            long id = entryDAO.getEntriesList().getEntryList().size();
+            entry.setId(id);
+            entry.setCreatedTime(LocalDateTime.now());
+            entry.setUpdatedTime(null);
 
-        Boolean success = entryDAO.addEntry(entry);
+            Boolean success = entryDAO.addEntry(entry);
 
-        if(success){
-            URI location = ServletUriComponentsBuilder.fromCurrentRequest()
-                    .path("/{id}")
-                    .buildAndExpand(entry.getId())
-                    .toUri();
-            return ResponseEntity.created(location).build();
-        }
-        else{
+            if(success){
+                URI location = ServletUriComponentsBuilder.fromCurrentRequest()
+                        .path("/{id}")
+                        .buildAndExpand(entry.getId())
+                        .toUri();
+                return ResponseEntity.created(location).build();
+            }
+            else{
+                return ResponseEntity.status(500).build();
+            }
+        } catch (NullPointerException e) {
             return ResponseEntity.status(500).build();
         }
     }
