@@ -17,6 +17,7 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -51,9 +52,9 @@ public class EntryControllerTests {
 
         when(entryDAO.addEntry(any(Entry.class))).thenReturn(true);
 
-        Entry entry = new Entry(0, null, null, "test title", "updated message");
-        ResponseEntity<Entry> responseEntity = entryController.updateEntry(entry,1);
-        assertThat(responseEntity.getStatusCodeValue()).isEqualTo(200);
+        Entry testEntry = new Entry(0, null, null, "test title", "Add message");
+        ResponseEntity<Entry> responseEntity1 = entryController.updateEntry(testEntry);
+        assertThat(responseEntity1.getStatusCodeValue()).isEqualTo(404);
     }
 
     @Test
@@ -61,9 +62,9 @@ public class EntryControllerTests {
         MockHttpServletRequest request = new MockHttpServletRequest();
         RequestContextHolder.setRequestAttributes(new ServletRequestAttributes(request));
 
-        when(entryDAO.addEntry(any(Entry.class))).thenReturn(true);
+        when(entryDAO.getEntry(anyInt())).thenReturn(any(Entry.class));
 
-        ResponseEntity<Entry> responseEntity = entryController.getEntry(1);
-        assertThat(responseEntity.getStatusCodeValue()).isEqualTo(200);
+        ResponseEntity<Entry> responseEntity1 = entryController.getEntry(0);
+        assertThat(responseEntity1.getStatusCodeValue()).isEqualTo(404);
     }
 }
