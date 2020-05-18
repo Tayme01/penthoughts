@@ -11,6 +11,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @RestController
 @RequestMapping(path = "/entry")
@@ -20,7 +21,7 @@ public class EntryController {
     EntryDAO entryDAO;
 
     @GetMapping(path="/", produces = "application/json")
-    public Entries getAllEntries()
+    public List<Entry> getAllEntries()
     {
         return entryDAO.getEntriesList();
     }
@@ -29,13 +30,17 @@ public class EntryController {
     public ResponseEntity<Entry> getEntry(@PathVariable int id)
     {
         Entry myEntry = entryDAO.getEntry(id);
-        return new ResponseEntity<Entry>(myEntry, HttpStatus.OK);
+        if (myEntry == null){
+            return new ResponseEntity<Entry>(myEntry, HttpStatus.NOT_FOUND);
+        }else{
+            return new ResponseEntity<Entry>(myEntry, HttpStatus.OK);
+        }
     }
 
     @PostMapping(path="/", consumes = "application/json", produces = "application/json")
     public ResponseEntity<Entry> addEntry(@RequestBody Entry entry){
         try {
-            long id = entryDAO.getEntriesList().getEntryList().size();
+            long id = entryDAO.getEntriesList().size();
             entry.setId(id);
             entry.setCreatedTime(LocalDateTime.now());
             entry.setUpdatedTime(null);
@@ -58,9 +63,13 @@ public class EntryController {
     }
 
     @PutMapping(path="/{id}", consumes = "application/json", produces = "application/json")
-    public ResponseEntity<Entry> updateEntry(@RequestBody Entry updatedEntry, @PathVariable long id)
+    public ResponseEntity<Entry> updateEntry(@RequestBody Entry updatedEntry)
     {
-        Entry currentEntry = entryDAO.getEntry(id);
+        // validate entry
+        Entry currentEntry = entryDAO.getEntry(updatedEntry.getId());
+        if(currentEntry == null){
+            return new ResponseEntity<Entry>(currentEntry, HttpStatus.NOT_FOUND);
+        }
         Entry result = entryDAO.updateEntry(currentEntry, updatedEntry);
         return new ResponseEntity<Entry>(result, HttpStatus.OK);
     }
